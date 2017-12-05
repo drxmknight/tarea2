@@ -4,14 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Token implements Serializable {
+    private static final long serialVersionUID = 227L;
+
     public ArrayList<Integer> queue;
     public int[] LN;
 
     public Token(int n) {
-        queue = new ArrayList<Integer>();
-        for (int i = 0; i < n; i++) {
-            queue.add(0);
-        }
+        queue = new ArrayList<>();
 
         LN = new int[n];
         for (int i = 0; i < n; i++) {

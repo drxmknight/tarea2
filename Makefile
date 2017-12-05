@@ -12,7 +12,7 @@ token:
 # Compile the packet with the remote interfaces.
 # Generates a jar with the files to add it to the rmiregistry afterwards.
 remoteInterfaces:
-	cd out && javac remoteInterfaces/*.java
+	cd out && javac -cp token.jar remoteInterfaces/*.java
 	cd out && jar cvf remoteInterfaces.jar remoteInterfaces/*.class
 	rm -rf out/remoteInterfaces
 
@@ -23,22 +23,11 @@ suzukiKasami:
 	rm -f out/suzukiKasami/*.java
 
 process:
-	cd out && javac -cp remoteInterfaces.jar:suzukiKasami.jar process/*.java
+	cd out && javac -cp remoteInterfaces.jar:suzukiKasami.jar:token.jar process/*.java
 	rm -f out/process/*.java
 
 run-rmiregistry:
 	CLASSPATH=out/remoteInterfaces.jar rmiregistry
-
-run-suzukiKasami:
-	cd out && java -cp .:remoteInterfaces.jar\
-	    -Djava.security.policy=security.policy\
-	    suzukiKasami.remoteObject
-
-
-id = 0
-n = 1
-initialDelay = 100
-bearer = false
 
 run-process:
 	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar\
@@ -51,7 +40,21 @@ clean:
 test:
 	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
     	    -Djava.security.policy=security.policy\
-    	    process.Process 0 2 100 true &\
-    cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
+    	    process.Process 0 6 100 true &\
+	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
         	    -Djava.security.policy=security.policy\
-        	    process.Process 1 2 100 false &\
+        	    process.Process 1 6 100 false &\
+	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
+        	    -Djava.security.policy=security.policy\
+        	    process.Process 2 6 100 false &\
+	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
+            	    -Djava.security.policy=security.policy\
+            	    process.Process 3 6 100 false &\
+	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
+                	    -Djava.security.policy=security.policy\
+                	    process.Process 4 6 100 false &\
+	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
+                	    -Djava.security.policy=security.policy\
+                	    process.Process 5 6 100 false &\
+
+
