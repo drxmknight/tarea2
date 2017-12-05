@@ -1,54 +1,19 @@
 package process;
 
-import remoteInterfaces.remoteInterface;
-import remoteObjects.remoteObject;
+import remoteInterfaces.RemoteInterface;
+import suzukiKasami.SuzukiKasami;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.Random;
 
 
 public class Process extends Thread {
 
-    private int id;
-    private int[] RM;
-    private int initialDelay;
-    private String state = "green";
-    //private Token token;
-    private String name;
-
-    private Process(int id, int procNumber, int initialDelay, String bearer) {
-        this.id = id;
-        this.RM = new int[procNumber];
-        this.name = "process" + Integer.toString(this.id);
-        this.initialDelay = initialDelay;
-
-        for (int i = 0; i < procNumber; i++) {
-            this.RM[i] = 0;
-        }
-
-        if (bearer.equals("true")) {
-            this.state = "red";
-            System.out.println("Process " + this.id + " in Critic Section");
-            //this.token = new Token(Integer.parseInt(args[1]));
-        }
-
-
-    }
-
-    private void printState() {
-        System.out.println("Process " + this.id + " : " + this.state);
-    }
-
-    private void requestAll() {
-
-    }
-
     public static void main(String[] args) {
 
-        remoteInterface suzukiKazami;
+        RemoteInterface suzukiKazami;
 
         if (args.length < 4) {
             System.out.println("Wrong arguments.");
@@ -62,25 +27,20 @@ public class Process extends Thread {
         String bearer = args[3];
 
         // Create process.
-        Process process = new Process(id, n, initialDelay, bearer);
-
-        // Bind process methods to rmi registry.
+        SuzukiKasami process = null;
         try {
-            suzukiKazami = new remoteObject();
-            Naming.rebind(process.name, suzukiKazami);
+            process = new SuzukiKasami(id, n, initialDelay, bearer);
+            Naming.rebind(process.name, process);
             System.out.println(process.name + " bound to RMI.");
         } catch (RemoteException | MalformedURLException e) {
             e.printStackTrace();
-            return;
         }
-
-
 
         if (bearer.equals("false")) {
             System.out.println("entroooo");
             try {
-                suzukiKazami = (remoteInterface) Naming.lookup("process1");
-                System.out.println(suzukiKazami.Hello());
+                suzukiKazami = (RemoteInterface) Naming.lookup("process0");
+                System.out.println(suzukiKazami.Hello(process.name));
             } catch (NotBoundException | MalformedURLException | RemoteException e) {
                 e.printStackTrace();
             }
@@ -121,7 +81,7 @@ public class Process extends Thread {
         }*/
 
         /*try {
-            remoteInterface obj = (remoteInterface) Naming.lookup("HelloInterface");
+            RemoteInterface obj = (RemoteInterface) Naming.lookup("HelloInterface");
             System.out.println(obj.Hello());
         } catch (RemoteException | NotBoundException | MalformedURLException e) {
             e.printStackTrace();
