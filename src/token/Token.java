@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Token implements Serializable {
-    private static final long serialVersionUID = 227L;
-
     public ArrayList<Integer> queue;
     public int[] LN;
 

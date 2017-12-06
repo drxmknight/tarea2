@@ -25,7 +25,6 @@ public class SuzukiKasami extends UnicastRemoteObject implements RemoteInterface
     private int processNumber;
     public int initialDelay;
     public String state;
-    //private Token token;
     public String name;
     public Token token = null;
     public boolean hasToken = false;

@@ -7,7 +7,7 @@ out:
 token:
 	cd out && javac token/*.java
 	cd out && jar cvf token.jar token/*.class
-	rm -rf out/token
+	#rm -rf out/token
 
 # Compile the packet with the remote interfaces.
 # Generates a jar with the files to add it to the rmiregistry afterwards.
@@ -23,16 +23,16 @@ suzukiKasami:
 	rm -f out/suzukiKasami/*.java
 
 process:
-	cd out && javac -cp remoteInterfaces.jar:suzukiKasami.jar:token.jar process/*.java
+	cd out && javac -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar process/*.java
 	rm -f out/process/*.java
 
 run-rmiregistry:
 	CLASSPATH=out/remoteInterfaces.jar rmiregistry
 
 run-process:
-	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar\
+	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
 	    -Djava.security.policy=security.policy\
-	    process.Process 2 1 100 false
+	    process.Process 0 1 100 true
 
 clean:
 	rm -rf out
@@ -56,5 +56,4 @@ test:
 	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
                 	    -Djava.security.policy=security.policy\
                 	    process.Process 5 6 100 false &\
-
 
