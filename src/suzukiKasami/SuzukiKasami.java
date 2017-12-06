@@ -20,8 +20,8 @@ import java.util.Arrays;
  */
 public class SuzukiKasami extends UnicastRemoteObject implements RemoteInterface {
 
-    public int id;
-    public int[] RN;
+    private int id;
+    private int[] RN;
     private int processNumber;
     public int initialDelay;
     public String state;
@@ -61,7 +61,7 @@ public class SuzukiKasami extends UnicastRemoteObject implements RemoteInterface
             this.RN[id] = seq;
         }
         // If the process has the token and is Idle.
-        if (this.hasToken && !this.state.equals("red")) {
+        if (this.hasToken && this.state.equals("green")) {
             if (this.RN[id] == this.token.LN[id] + 1) {
                 sendToken(id);
             }
@@ -74,6 +74,7 @@ public class SuzukiKasami extends UnicastRemoteObject implements RemoteInterface
 
     @Override
     public void takeToken(Token token) {
+        System.out.println(this.name + " has the token.");
         this.token = token;
         this.hasToken = true;
         this.state = "red";
@@ -131,7 +132,9 @@ public class SuzukiKasami extends UnicastRemoteObject implements RemoteInterface
     }
 
     // Update outstanding requests.
-    public void updateQueue() {
+    public void update() {
+        // Process leaves the CS and update the LN of the token.
+        this.token.LN[this.id] = this.RN[this.id];
         for (int i = 0; i < processNumber; i++) {
             if (!contains(this.RN, i) && this.RN[i] == this.token.LN[i] + 1) {
                 this.token.queue.add(i);

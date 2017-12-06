@@ -29,7 +29,9 @@ public class Process {
             process = new SuzukiKasami(id, n, initialDelay, bearer);
             Naming.rebind(process.name, process);
             System.out.println(process.name + " bound to RMI.");
-        } catch (RemoteException | MalformedURLException e) {
+            // Initial wait before algorithm starts.
+            Thread.sleep(1000);
+        } catch (RemoteException | MalformedURLException | InterruptedException e) {
             e.printStackTrace();
             return;
         }
@@ -38,13 +40,18 @@ public class Process {
 
 
         while (true) {
+
             // Simulate a wait until the process send a request of the token.
             if (process.state.equals("green")) {
+                process.printState();
                 try {
                     int rand = r.nextInt(3) + 1;
                     Thread.sleep(1000 * rand);
                     // Process tries to enter to the CS.
-                    process.state = "yellow";
+                    if (process.hasToken)
+                        process.state = "red";
+                    else
+                        process.state = "yellow";
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     return;
@@ -54,12 +61,15 @@ public class Process {
             if (process.state.equals("yellow")) {
                 try {
                     process.requestAll();
-                    while(!process.hasToken) {
-                        Thread.sleep(process.initialDelay);
-                    }
+
+                    Thread.sleep(process.initialDelay);
+                    process.printState();
+
                     if (process.hasToken) {
                         process.state = "red";
                     }
+                    else
+                        process.state = "green";
                     process.printState();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -71,10 +81,8 @@ public class Process {
                 try {
                     int rand = r.nextInt(2) + 1;
                     Thread.sleep(1000 * rand);
-                    // Process leaves the CS.
-                    process.token.LN[process.id] = process.RN[process.id];
                     // Appends outstanding requests.
-                    process.updateQueue();
+                    process.update();
                     // Finish if the token went through all processes.
                     process.finish();
                     if (!process.token.queue.isEmpty()) {
