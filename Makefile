@@ -27,7 +27,7 @@ process:
 	rm -f out/process/*.java
 
 run-rmiregistry:
-	CLASSPATH=out/remoteInterfaces.jar rmiregistry
+	CLASSPATH=out/token.jar:out/remoteInterfaces.jar rmiregistry
 
 run-process:
 	cd out && java -cp .:remoteInterfaces.jar:suzukiKasami.jar:token.jar\
